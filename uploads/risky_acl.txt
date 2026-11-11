@@ -1,0 +1,5 @@
+
+ip access-list extended RISKY_NETWORK
+ permit ip any any
+ permit tcp any any eq 23
+ permit tcp any any eq 22
