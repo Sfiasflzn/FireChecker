@@ -1,0 +1,256 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FireChecker | Analysis Results</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f3f6fb;
+            color: #172b4d;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        h1 {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #718096;
+        }
+
+        .button {
+            display: inline-block;
+            background: #1677d2;
+            color: white;
+            padding: 13px 22px;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 28px;
+            border-radius: 13px;
+            border: 1px solid #dce4ef;
+        }
+
+        .card p {
+            color: #718096;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 30px;
+        }
+
+        .risk-critical {
+            color: #dc2626;
+        }
+
+        .risk-high {
+            color: #ea580c;
+        }
+
+        .risk-medium {
+            color: #d97706;
+        }
+
+        .risk-low {
+            color: #16a34a;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 13px;
+            border: 1px solid #dce4ef;
+            margin-bottom: 25px;
+        }
+
+        .section h2 {
+            margin-bottom: 20px;
+        }
+
+        .finding {
+            border: 1px solid #e2e8f0;
+            border-left: 5px solid #dc2626;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+        .finding h3 {
+            margin-bottom: 10px;
+        }
+
+        .finding p {
+            margin-bottom: 8px;
+            color: #52627a;
+        }
+
+        .severity {
+            font-weight: bold;
+        }
+
+        .file-info {
+            color: #718096;
+            margin-bottom: 20px;
+        }
+
+        @media(max-width: 750px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <div>
+            <h1>Security Analysis Results</h1>
+            <p class="subtitle">
+                FireChecker Firewall Security Assessment
+            </p>
+        </div>
+
+        <a href="/" class="button">Back to Dashboard</a>
+    </div>
+
+    <div class="section">
+        <h2>Configuration Information</h2>
+
+        <p class="file-info">
+            Uploaded File: <strong>{{ filename }}</strong>
+        </p>
+    </div>
+
+    <div class="cards">
+
+        <div class="card">
+            <p>Total ACL Rules</p>
+            <h2>{{ total_rules }}</h2>
+        </div>
+
+        <div class="card">
+            <p>Security Findings</p>
+            <h2>{{ summary.total_findings }}</h2>
+        </div>
+
+        <div class="card">
+            <p>Risk Score</p>
+            <h2>{{ summary.total_score }}</h2>
+        </div>
+
+    </div>
+
+    <div class="section">
+
+        <h2>Overall Risk Assessment</h2>
+
+        {% set risk = summary.risk_level|lower %}
+
+        <h1 class="risk-{{ risk }}">
+            {{ summary.risk_level }}
+        </h1>
+
+        <p>Overall firewall security risk level.</p>
+
+    </div>
+
+    <div class="section">
+
+        <h2>Security Findings</h2>
+
+        {% if findings %}
+
+            {% for finding in findings %}
+
+                <div class="finding">
+
+                    <h3>
+                        {{ finding.issue }}
+                    </h3>
+
+                    <p>
+                        <strong>Rule:</strong>
+                        {{ finding.rule }}
+                    </p>
+
+                    <p>
+                        <strong>Line Number:</strong>
+                        {{ finding.line_number }}
+                    </p>
+
+                    <p>
+                        <strong>Severity:</strong>
+
+                        <span class="severity">
+                            {{ finding.severity }}
+                        </span>
+                    </p>
+
+                    <p>
+                        <strong>Recommendation:</strong>
+                        {{ finding.recommendation }}
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>
+                No security findings detected.
+                Your firewall configuration passed the current security checks.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,335 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FireChecker | Security Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f3f6fb;
+            color: #172b4d;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 275px;
+            background: #101e38;
+            color: white;
+            padding: 30px 25px;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            margin-bottom: 50px;
+        }
+
+        .logo span {
+            color: #22b8f0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            padding: 17px;
+            margin-bottom: 10px;
+            border-radius: 9px;
+            cursor: pointer;
+        }
+
+        .sidebar li:hover,
+        .sidebar li.active {
+            background: #203c61;
+            color: #22b8f0;
+        }
+
+        .main {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .status {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border: 1px solid #dce4ef;
+            border-radius: 14px;
+        }
+
+        .card p {
+            color: #718096;
+            font-size: 17px;
+            margin-bottom: 25px;
+        }
+
+        .card h2 {
+            font-size: 28px;
+        }
+
+        .risk-critical {
+            color: #dc2626;
+        }
+
+        .risk-high {
+            color: #ea580c;
+        }
+
+        .risk-medium {
+            color: #ca8a04;
+        }
+
+        .risk-low {
+            color: #16a34a;
+        }
+
+        .upload-section {
+            background: white;
+            padding: 35px;
+            border: 1px solid #dce4ef;
+            border-radius: 14px;
+        }
+
+        .upload-section h2 {
+            font-size: 25px;
+            margin-bottom: 15px;
+        }
+
+        .upload-section > p {
+            color: #718096;
+            margin-bottom: 30px;
+        }
+
+        .upload-area {
+            border: 2px dashed #9aafd0;
+            border-radius: 12px;
+            padding: 45px 20px;
+            text-align: center;
+        }
+
+        .upload-area h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .upload-area p {
+            color: #718096;
+            margin-bottom: 25px;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin: 0 auto 20px;
+            max-width: 100%;
+        }
+
+        button {
+            background: #1677d2;
+            color: white;
+            border: none;
+            padding: 13px 28px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #105ca8;
+        }
+
+        @media (max-width: 900px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .main {
+                padding: 20px;
+            }
+
+            .header {
+                align-items: flex-start;
+                gap: 20px;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            Fire<span>Checker</span>
+        </div>
+
+        <ul>
+            <li class="active">Dashboard</li>
+            <li>Firewall Analysis</li>
+            <li>Security Findings</li>
+            <li>Risk Assessment</li>
+            <li>Reports</li>
+            <li>Settings</li>
+        </ul>
+
+    </aside>
+
+    <!-- Main Dashboard -->
+    <main class="main">
+
+        <!-- Header -->
+        <div class="header">
+
+            <div>
+                <h1>Security Dashboard</h1>
+                <p>Firewall Security Assessment System</p>
+            </div>
+
+            <div class="status">
+                ● System Ready
+            </div>
+
+        </div>
+
+        <!-- Dashboard Cards -->
+        <section class="cards">
+
+            <div class="card">
+                <p>Total ACL Rules</p>
+                <h2>{{ total_rules|default('--', true) }}</h2>
+            </div>
+
+            <div class="card">
+                <p>Security Findings</p>
+                <h2>{{ total_findings|default('--', true) }}</h2>
+            </div>
+
+            <div class="card">
+                <p>Risk Level</p>
+
+                <h2 class="
+                    {% if risk_level == 'Critical' %}risk-critical
+                    {% elif risk_level == 'High' %}risk-high
+                    {% elif risk_level == 'Medium' %}risk-medium
+                    {% elif risk_level == 'Low' %}risk-low
+                    {% endif %}
+                ">
+                    {{ risk_level|default('--', true) }}
+                </h2>
+            </div>
+
+        </section>
+
+        <!-- Upload Configuration -->
+        <section class="upload-section">
+
+            <h2>Firewall Configuration Analysis</h2>
+
+            <p>
+                Upload your firewall configuration file
+                to perform a security assessment.
+            </p>
+
+            <form action="/upload"
+                  method="POST"
+                  enctype="multipart/form-data">
+
+                <div class="upload-area">
+
+                    <h3>Upload Configuration File</h3>
+
+                    <p>
+                        Select your firewall ACL configuration
+                        for security analysis.
+                    </p>
+
+                    <input
+                        type="file"
+                        name="config_file"
+                        accept=".txt,.cfg"
+                        required
+                    >
+
+                    <button type="submit">
+                        Analyse Configuration
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>
