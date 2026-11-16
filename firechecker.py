@@ -1,5 +1,5 @@
 
-from pathlib import Path
+import argparse
 
 from config_reader import read_config, parse_acl_rules
 from rule_checker import check_acl_rules
@@ -14,22 +14,18 @@ def run_firechecker(config_file):
     print("===================================\n")
 
     try:
-        # Step 1: Read configuration
         print("[1/4] Reading configuration...")
         config_lines = read_config(config_file)
 
-        # Step 2: Parse ACL rules
         print("[2/4] Parsing ACL rules...")
         rules = parse_acl_rules(config_lines)
 
-        # Step 3: Check security issues
         print("[3/4] Checking security rules...")
         findings = check_acl_rules(rules)
 
-        # Step 4: Calculate risk
+        print("[4/4] Calculating risk...")
         risk_summary = calculate_risk(findings)
 
-        # Generate report
         report_path = generate_report(
             findings,
             risk_summary,
@@ -37,6 +33,7 @@ def run_firechecker(config_file):
         )
 
         print("\n========== ASSESSMENT RESULT ==========")
+        print(f"Configuration   : {config_file}")
         print(f"Total ACL rules : {len(rules)}")
         print(f"Total findings  : {risk_summary['total_findings']}")
         print(f"Risk score      : {risk_summary['total_score']}")
@@ -49,4 +46,14 @@ def run_firechecker(config_file):
 
 
 if __name__ == "__main__":
-    run_firechecker("samples/safe_acl.txt")
+    parser = argparse.ArgumentParser(
+        description="FireChecker - Firewall Security Assessment Tool"
+    )
+
+    parser.add_argument(
+        "config_file",
+        help="Path to the firewall configuration file"
+    )
+
+    args = parser.parse_args()
+    run_firechecker(args.config_file)
