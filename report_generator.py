@@ -6,24 +6,71 @@ from datetime import datetime, timezone
 
 def generate_report(findings, risk_summary, output_file):
     """
-    Generate a JSON firewall security assessment report.
+    Generate a detailed JSON firewall security assessment report.
     """
 
+    # Validate input
+    if not isinstance(findings, list):
+        raise ValueError("Findings must be provided as a list.")
+
+    if not isinstance(risk_summary, dict):
+        raise ValueError("Risk summary must be a dictionary.")
+
+    required_fields = [
+        "total_findings",
+        "total_score",
+        "risk_level"
+    ]
+
+    for field in required_fields:
+        if field not in risk_summary:
+            raise ValueError(
+                f"Missing risk summary field: {field}"
+            )
+
+    # Prepare report data
     report = {
         "tool": "FireChecker",
+        "version": "1.0.0",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "summary": {
             "total_findings": risk_summary["total_findings"],
             "risk_score": risk_summary["total_score"],
-            "risk_level": risk_summary["risk_level"]
+            "risk_level": risk_summary["risk_level"],
+            "severity_breakdown": risk_summary.get(
+                "severity_breakdown",
+                {
+                    "Critical": 0,
+                    "High": 0,
+                    "Medium": 0,
+                    "Low": 0
+                }
+            )
         },
         "findings": findings
     }
 
+    # Create output directory if it does not exist
     output_path = Path(output_file)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with output_path.open("w", encoding="utf-8") as file:
-        json.dump(report, file, indent=4)
+    output_path.parent.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    # Generate JSON report
+    try:
+        with output_path.open("w", encoding="utf-8") as file:
+            json.dump(
+                report,
+                file,
+                indent=4,
+                ensure_ascii=False
+            )
+
+    except OSError as error:
+        raise OSError(
+            f"Unable to generate report: {error}"
+        )
 
     return str(output_path)
