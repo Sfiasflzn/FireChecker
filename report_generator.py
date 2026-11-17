@@ -28,11 +28,25 @@ def generate_report(findings, risk_summary, output_file):
                 f"Missing risk summary field: {field}"
             )
 
-    # Prepare report data
+    # Prepare audit report
     report = {
         "tool": "FireChecker",
         "version": "1.0.0",
         "generated_at": datetime.now(timezone.utc).isoformat(),
+
+        "audit": {
+            "audit_scope": risk_summary.get(
+                "audit_scope", "Not specified"
+            ),
+            "configuration_file": risk_summary.get(
+                "configuration_file", "Not specified"
+            ),
+            "audit_mode": risk_summary.get(
+                "audit_mode",
+                "Offline configuration analysis"
+            )
+        },
+
         "summary": {
             "total_findings": risk_summary["total_findings"],
             "risk_score": risk_summary["total_score"],
@@ -47,10 +61,11 @@ def generate_report(findings, risk_summary, output_file):
                 }
             )
         },
+
         "findings": findings
     }
 
-    # Create output directory if it does not exist
+    # Prepare output directory
     output_path = Path(output_file)
 
     output_path.parent.mkdir(
@@ -58,7 +73,7 @@ def generate_report(findings, risk_summary, output_file):
         exist_ok=True
     )
 
-    # Generate JSON report
+    # Save JSON report
     try:
         with output_path.open("w", encoding="utf-8") as file:
             json.dump(
