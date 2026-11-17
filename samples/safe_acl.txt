@@ -1,0 +1,5 @@
+
+ip access-list extended SAFE_WEB
+ permit tcp 192.168.1.0 0.0.0.255 any eq 443
+ permit tcp 192.168.1.0 0.0.0.255 any eq 80
+ deny ip any any log
